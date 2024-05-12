@@ -1,0 +1,340 @@
+---
+title: "R Tutorial"
+author: "John He"
+format: html
+editor: visual
+---
+
+# R Tutorial for data manipulation
+
+## Purpose
+
+To give a brief demonstration for how to do simple data manipulation in R
+
+# Variables and types
+
+A quick overview of the various data value types:
+
+-   Numeric (including doubles, integers, floats)
+-   Characters (aka strings)
+-   Vectors (data structure with order that contain values)
+-   Lists (data structure with order that can contain variables but it's a different structure from vectors)
+-   Dataframes (basically what you see when you open up an excel file)
+
+```{r}
+1+1
+x <- 5
+y <- "hello world"
+z <- c("hi", "by", x) # vectors all have the same type
+w <- c("hi", 3, 4) # automatically converts numeric to character if there is one value that has a character type
+a <- list("hello", "what", y)
+```
+
+You can also change between types.
+
+```{r}
+as.character(500)
+as.numeric("5")
+as.double("5") # in general, use this for numbers
+as.integer("5")
+as.Date("2023-10-24")
+as.Date("10/24/2023", format = "%m/%d/%Y")
+```
+
+You can check the type of a variable or data value.
+
+```{r}
+typeof(x)
+typeof('5')
+typeof(10)
+```
+
+# Operations
+
+A quick overview of operations:
+
+-   Addition, Subtraction, Multiplication, Division
+
+-   Exponent
+
+-   Modulus (Remainder from division)
+
+-   Integer Division
+
+```{r}
+1+1 # Addition
+2-1 # Subtraction
+31*512 # Multiplication
+23.4/21 # Division
+2^7 # Exponent
+11%%3 # Modulus (AKA Remainder)
+10%%3 # Modulus (AKA Remainder)
+11%/%3 # Integer Division
+10%/%3 # Integer Division
+```
+
+# Booleans
+
+Booleans are different from setting a value. They are `TRUE` or `FALSE`. Generally involve `<=`, `>=`, `==`, `>`, and `<`. Can also be combined with `&` (and) and `|` (or)
+
+```{r}
+test_value <- 5
+test_value == 5
+test_value >= 30
+test_value <= 20
+test_value <= 20 & test_value > 1
+test_value > 30 | test_value < 1
+```
+
+# = vs \<-
+
+To be clear, they are pretty much the same in that they assign values to variables. However, generally \<- is used as an assignment operator while = is used as a syntax token that signals named argument passing in a function call.
+
+All that to say you should use \<- when assigning values to variables and = when you are passing an argument. Actual differences go too much into the weeds.
+
+# Functions - Base
+
+`?` followed by a function will open up R documentation on a function
+
+```{r}
+?library
+?setwd
+```
+
+## Libraries
+
+There are many libraries, and I will only go over a few of them here
+
+```{r}
+install.packages('tidyverse')
+install.packages('lubridate')
+install.packages('readxl')
+install.packages('writexl')
+
+library(tidyverse) # a library of multiple libraries including readr and ggplot2
+library(lubridate) # for calculating time differences
+library(readxl) # for reading in .xlsx and .xls files
+library(writexl) # for writing out .xlsx and .xls files
+```
+
+## Set Working Directory
+
+For reading files and downloading them to the same folder.
+
+```{r}
+setwd("E:/Projects/R tutorial/")
+# change this into the file path of your folder to run examples.
+# Make sure to use forward slashes.
+```
+
+## Read in Files
+
+It is important to note that Excel is a program that is able to read a file. It is not a file type. .xlsx is it's proprietary file type. .csv is a more general file type that is, in general, more widely used for storing and accessing data than .xlsx.
+
+Also, if you open a .csv file in Excel and create multiple sheets, it will only save the one that you on when you close the file.
+
+The .csv file type stands for comma separated values, and while this is not the most efficient way to store data, it is a widely used format for exchanging research data.
+
+The .xls or .xlsx file type is Excel's proprietary file type, and unless you are doing a lot of work in Excel, I would not recommend using this file type to store your data.
+
+Use `read_csv()` for .csv files, `read_xls()` for .xls files, `read_xlsx()` for .xlsx files,and `read_delim()` for .txt files. These files will be read in as dataframe data types.
+
+```{r}
+data_full <- read_csv('lung_cancer_examples.csv') # make sure to include the .csv
+# Make sure that the lung_cancer_examples.csv file is in the same folder as the R tutorial.qmd file.
+```
+
+## 
+
+## Write out Files
+
+Use `write_xlsx()` for .xlsx files and `write_csv()` for .csv files
+
+```{r}
+write_csv("lung_cancer_examples.csv") # make sure to include the .csv
+write_xlsx("lung_cancer_examples.xlsx") # make sure to include the .xlsx
+```
+
+# Piping - Intermission
+
+Before going into the functions used, we need to talk about piping. As you may have noticed, the r code chunks above run every line of code in the chunk. However, in the chunk, you can still run line by line (use `Ctrl` + `Enter`). Thus, to perform multiple functions in sequence, piping is used as illustrated below. Piping is key when modifying dataframes.
+
+There are two types of piping:
+
+-   `%>%` from dplyr (which I will use in this document)
+
+-   `|>` from base R code
+
+Internet consensus seems to indicate `%>%` is the more powerful of the two.
+
+```{r}
+data_full %>%
+  view()
+```
+
+# Functions - Continued
+
+## Filter
+
+`filter()` allows you to filter out values in a dataframe based on a condition, sort of like Excel Filter.
+
+```{r}
+data_full %>%
+  filter(Result == 1)
+```
+
+## Mutate
+
+`mutate()` allows you to change values in a column or create a new column.
+
+```{r}
+data_full %>%
+  mutate(new_column = "example dataset") %>%
+  mutate(Result = Result*100)
+```
+
+## Select
+
+`select()` allows you to select the columns that you want.
+
+```{r}
+data_full %>%
+  select(Name, Surname, Smokes, Alkhol)
+```
+
+## Rename
+
+`rename()` allows you to change column names.
+
+```{r}
+data_full %>%
+  rename(years_smoked = Smokes, years_alcohol = Alkhol)
+```
+
+## Distinct
+
+`distinct()` allows you to only output the unique values of a column. Adding the argument `.keep_all = TRUE` will keep all columns
+
+```{r}
+data_full %>%
+  distinct(AreaQ)
+```
+
+```{r}
+data_full %>%
+  distinct(AreaQ, .keep_all = TRUE)
+```
+
+## Group By
+
+`group_by()` allows you to group a column by it's values so that you can apply another function.
+
+```{r}
+# Grouping by Surname and then getting the minimum age
+data_full %>%
+  group_by(Surname) %>%
+  filter(min(Age))
+```
+
+## If Else
+
+`if_else()` allows you to output values based off of a condition. It can do more, but to begin with, this is enough. `if_else()` takes a condition, the value to output if true, and the value to output if false.
+
+```{r}
+data_full %>%
+  mutate(age_bool = if_else(Age <= 65, #are they younger than 65?
+                            "young", #true
+                            "old")) %>% #false
+  select(-AreaQ, -Alkhol)
+```
+
+## Summarize
+
+`summarize()` or `summarise()` creates a new data frame based off of summarizing statistic functions you pass into it.
+
+```{r}
+data_full %>%
+  summarize(max(Age),
+            min(Age),
+            mean(Age))
+```
+
+```{r}
+data_full %>%
+  group_by(Result) %>%
+  summarize(max(Age),
+            min(Age),
+            mean(Age))
+```
+
+## Joining
+
+Taking a dataframe A and another dataframe B by some column C, joining will return all columns between the 2 dataframs. You can join by multiple columns.
+
+-   `inner_join()` will return only the rows in column C that match between dataframes A and B.
+
+-   `left_join()` will return all rows in dataframe A and match B to A.
+
+-   `right_join()` will return all rows in dataframe B and match A to B
+
+-   `full_join()` will return all rows in both dataframes A and B.
+
+```{r}
+# NOTE: remember you can use ctrl + Enter to run line by line or multiple functions in sequence by piping.
+
+# Example of getting Cities from test_full into the data_full
+test_full <- data.frame( #data.frame function creates a dataframe
+  Name = c("Alice", "Bob", "Charlie", "David", "Eve", "John", "Kathy", "Diego"),
+  Age = c(25, 30, 22, 35, 28, 35, 22, 100),
+  City = c("New York", "Los Angeles", "Chicago", "Houston", "San Francisco", "New York", "Austin", "City34")
+)
+
+# left_join generally
+left_join(data_full,
+          test_full,
+          by = "Name")
+
+# Using piping
+data_full %>%
+  left_join(test_full,
+            by = "Name") %>%
+  filter(!is.na(Age.y))
+
+# Join by two columns
+data_full %>%
+  left_join(test_full,
+            by = c("Name", "Age")) %>%
+  filter(!is.na(City))
+
+# right_join
+data_full %>%
+  right_join(test_full,
+             by = c("Name", "Age"))
+
+```
+
+## Pivot
+
+Pivoting involves converting a dataset from long to wide or wide to long formats. For example, if you have a 50 gene panel with each row being a patient and their gene mutation, you can use `pivot_wider()` to put the gene mutations in columns and have 1 row per patient.
+
+-   `pivot_longer()` converts a "wide" dataset to its "long" form
+
+-   `pivot_wider()` converts a "long" dataset to its "wide" form
+
+-   Both need `names_from` and `values_from` arguments
+
+    -   `names_from` specifies the names of the new columns
+
+    -   `values_from` specifies the values in each column of the new column
+
+    -   `id_cols` specifies the unique id in each row that you want to "pivot" by. This will commonly be your pin or mrn.
+
+```{r}
+wider_ex <- pivot_wider(data_full %>%
+                          group_by(Surname, Name) %>%
+                          reframe(mean_age = as.integer(mean(Age))),
+                        id_cols = Surname,
+                        values_from = mean_age,
+                        names_from = Name,
+                        values_fill = 0)
+```
