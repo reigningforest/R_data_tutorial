@@ -1,7 +1,7 @@
 # R_data_tutorial
 Simple tutorial in R to accelerate understanding in data manipulation for researchers. Specifically geared towards those who have had experience in another coding language (e.g., SAS, STATA, python) or who need a refresher in R (e.g., you've taken a coding course before but that was years ago).
 
-## Running the file
+## How to Use:
 - Download [R tutorial.qmd](https://github.com/reigningforest/R_data_tutorial/blob/main/R%20tutorial.qmd) and [lung_cancer_examples.csv](https://github.com/reigningforest/R_data_tutorial/blob/main/lung_cancer_examples.csv)
 - All libraries/packages needed are within one of the code blocks in the [R tutorial.qmd](https://github.com/reigningforest/R_data_tutorial/blob/main/R%20tutorial.qmd)
 
